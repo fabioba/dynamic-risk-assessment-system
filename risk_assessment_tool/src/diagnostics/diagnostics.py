@@ -14,6 +14,7 @@ import os
 import pickle
 import logging
 import subprocess
+import json
 
 logger=logging.getLogger(__name__) 
 
@@ -212,16 +213,14 @@ def outdated_packages_list():
         Monitor installed packages
     """
     try:
-        installed = subprocess.check_output(['pip', 'list'])
-        logger.info('installed: {}'.format(installed))
+        data = subprocess.check_output(["pip", "list", "--format", "json"])
+        parsed_results = json.loads(data)
+        table_final=[(element["name"], element["version"]) for element in parsed_results]
+        #table_final=[subprocess.check_output(['python','-m','pip', 'show', element["name"]]) for element in parsed_results]
 
-        # check info package
-        for lib in installed:
-            tempo_list_lib=list()
-            tempo_list_lib.append(lib)
+        logger.info('table_final: {}'.format(table_final))
 
-            current_lib_info = subprocess.check_output(['pip', 'show', lib])
-            tempo_list_lib.append(current_lib_info)
+        return table_final
 
 
 
