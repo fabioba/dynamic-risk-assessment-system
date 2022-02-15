@@ -21,7 +21,6 @@ logging.basicConfig(format='%(name)s %(funcName)s %(asctime)s %(message)s',level
 from risk_assessment_tool.src.diagnostics import diagnostics
 from risk_assessment_tool.src.scoring import scoring
 
-
 # read config.json
 
 config_dict = config.read_config()
@@ -48,9 +47,10 @@ logger.info(__name__)
 
 ######################Set up variables for use in our script
 app = Flask(__name__)
-app.secret_key = '1652d576-484a-49fd-913a-6879acfa6ba4'
 
 prediction_model = None
+import sys
+#print(sys.modules)
 
 @app.route("/")
 def home():
@@ -58,12 +58,15 @@ def home():
     return {"ok":"ok"}
 
 #######################Prediction Endpoint
-@app.route("/prediction")
+@app.route("/prediction", methods=['GET','POST'])
 def predict(): 
     """
     call the prediction function you created in Step 3
     add return value for prediction outputs
     """    
+    logger.info('prediction')
+
+    logger.info('dataset_csv_path: {}'.format(dataset_csv_path))
 
     # read data
     final_dataset=diagnostics.read_data(dataset_csv_path)
@@ -77,7 +80,7 @@ def predict():
     preds=diagnostics.make_prediction(model_trained,final_dataset)
     #logger.info('preds: {}'.format(preds))
 
-    return {'preds':preds,'status_code':200}
+    return {'preds':str(preds),'status_code':200}
 
     
 
@@ -90,7 +93,7 @@ def stats():
     """
     f1_score=scoring.calculate_score_model(test_data_path,model_path,scoring_model_path)
 
-    return {'f1_score':f1_score,'status_code':200}
+    return {'f1_score':str(f1_score),'status_code':200}
 
 
 #######################Summary Statistics Endpoint
@@ -108,11 +111,11 @@ def summarystats():
 
     list_mean,list_median,list_std=diagnostics.dataframe_summary(final_dataset) 
     #check means, medians, and modes for each column
-    return {"list_mean":list_mean,"list_median":list_median,"list_std":list_std, "status_code":200}
+    return {"list_mean":str(list_mean),"list_median":str(list_median),"list_std":str(list_std), "status_code":200}
 
 #######################Diagnostics Endpoint
 @app.route("/diagnostics", methods=['GET','OPTIONS'])
-def diagnostics():        
+def get_diagnostics():        
     """
     check timing and percent NA values
     return #add return value for all diagnostics
@@ -131,11 +134,8 @@ def diagnostics():
 
     table_packages=diagnostics.outdated_packages_list()
 
-    return {"timing":list_timing,"missing_data":list_na_values_perc,"dependency_checks":table_packages, "status_code":200}
+    return {"timing":str(list_timing),"missing_data":str(list_na_values_perc),"dependency_checks":str(table_packages), "status_code":200}
 
-@app.route("/test", methods=['GET','OPTIONS'])
-def test():  
-    logger.info('ok')
 
 
 if __name__ == "__main__":    

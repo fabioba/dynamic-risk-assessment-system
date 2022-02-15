@@ -28,7 +28,7 @@ scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.
 prod_deployment_path= config_dict['prod_deployment_path']
 scoring_model_path_prod = os.path.join(config_dict['prod_deployment_path'],'latestscore.txt') 
 model_path_prod = os.path.join(config_dict['prod_deployment_path'],'trainedmodel.pkl') 
-confusion_matrix_path_prod = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
+confusion_matrix_path_prod = os.path.join(config_dict['output_model_path'],'confusionmatrix2.png') 
 
 path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
