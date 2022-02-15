@@ -5,6 +5,16 @@ Date: 15th of Feb, 2022
 Author: Fabio Barbazza
 """
 
+
+from flask import Flask, session, jsonify, request
+import pandas as pd
+import numpy as np
+import pickle
+import json
+import os
+import logging
+
+
 from risk_assessment_tool.src.diagnostics import diagnostics
 from risk_assessment_tool.src.scoring import scoring
 
@@ -28,14 +38,6 @@ path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfile
 
 confusion_matrix_path = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
 
-
-from flask import Flask, session, jsonify, request
-import pandas as pd
-import numpy as np
-import pickle
-import json
-import os
-import logging
 
 logger=logging.getLogger(__name__)
 
