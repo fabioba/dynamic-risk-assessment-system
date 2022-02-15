@@ -44,7 +44,8 @@ def check_data(dataset_csv_path,model_path):
 
         list_timing=training_timing()
 
-        outdated_packages_list()
+        table_packages=outdated_packages_list()
+        
 
     except Exception as err:
         logger.exception(err)
@@ -225,9 +226,6 @@ def outdated_packages_list():
         logger.info('df: {}'.format(str(df.head())))
 
         return df
-
-
-
 
     except Exception as err:
         logger.exception(err)

@@ -23,6 +23,8 @@ def calculate_score_model(test_data_path,model_path,scoring_model_path):
             test_data_path(str): path of the input data
             model_path(str): path of the model
             scoring_model_path(str): path of the folder to store score
+        Output:
+            scoring(numpy array)
     """
     try:
 
@@ -36,7 +38,7 @@ def calculate_score_model(test_data_path,model_path,scoring_model_path):
 
         store_score(scoring,scoring_model_path)
 
-
+        return scoring
 
     except Exception as err:
         logger.exception(err)
