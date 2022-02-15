@@ -74,6 +74,41 @@ from risk_assessment_tool.src.reporting import reporting
 ##################Diagnostics and reporting
 #run diagnostics.py and reporting.py for the re-deployed model
 
+flag_automation=True
+
+def check_read_new_data():
+    """
+        Check and read new data
+    """
+    try:
+        # read ingestedfile.txt
+        with open(path_ingestedfiles, 'r') as handler:
+            ingested_files=handler.read().split('\n')
+            
+        logger.info('ingested_files: {}'.format(ingested_files))
+        # check if there's some files in sourcedata that are not ingested yet
+        list_elems=os.listdir(input_folder_path)
+        logger.info('list_elems: {}'.format(list_elems))
+
+        # get those files not ingested
+        list_diff_files=list(set(set(list_elems)-set(ingested_files)))
+        
+        logger.info('len diff files: {}'.format(len(list_diff_files)))
+        logger.info('list_diff_files: {}'.format(list_diff_files))
+
+
+        # ingest not ingested files
+        if len(list_diff_files):
+            ingestion.merge_multiple_dataframe(input_folder_path,output_folder_path,list_diff_files)
+
+
+        # read last score
+
+
+    except Exception as err:
+        logger.exception(err)
+
+
 
 def workflow():
     """
@@ -100,7 +135,10 @@ def workflow():
         logger.exception(err)
 
 if __name__=='__main__':
-    workflow()
+    if flag_automation:
+        check_read_new_data()
+    else:
+        workflow()
 
 
 

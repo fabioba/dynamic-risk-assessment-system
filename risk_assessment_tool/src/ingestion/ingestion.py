@@ -86,7 +86,7 @@ def store_list_files(list_files,output_folder_path):
     try:
         output_path=os.path.join( output_folder_path , 'ingestedfiles.txt')
         
-        with open(output_path, 'w') as f:
+        with open(output_path, 'a+') as f:
             for item in list_files:
                 f.write("%s\n" % item)
 
@@ -97,13 +97,14 @@ def store_list_files(list_files,output_folder_path):
         raise
 
 
-def merge_multiple_dataframe(input_folder_path,output_folder_path):
+def merge_multiple_dataframe(input_folder_path,output_folder_path,list_ingested_prior=list()):
     """
         This method ingest data from folders
 
         Args:
             input_folder_path(str): path input data
             output_folder_path(str): path output folder
+            list_ingested_prior(list): list previous ingested files (empty as default)
 
 
     """
@@ -115,7 +116,11 @@ def merge_multiple_dataframe(input_folder_path,output_folder_path):
 
         # get all elements in folder
         list_elems=os.listdir(data_folder)
-        for file in list_elems:
+
+        # get file to ingest
+        list_file_to_ingest=list(set(set(list_elems)-set(list_ingested_prior)))
+
+        for file in list_file_to_ingest:
             logger.info('elem in {} folder: {}'.format(data_folder,file))
 
             path_file=os.path.join(data_folder,file)
