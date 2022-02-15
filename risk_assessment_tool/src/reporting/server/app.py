@@ -4,7 +4,10 @@ This module provides the api
 Date: 15th of Feb, 2022
 Author: Fabio Barbazza
 """
+from risk_assessment_tool import config
 
+# set logging dict
+config.set_logger()
 
 from flask import Flask, session, jsonify, request
 import pandas as pd
@@ -14,7 +17,9 @@ import json
 import os
 import logging
 
-
+import sys
+# append the path of the
+# parent directory
 from risk_assessment_tool.src.diagnostics import diagnostics
 from risk_assessment_tool.src.scoring import scoring
 
@@ -56,15 +61,19 @@ def predict():
     call the prediction function you created in Step 3
     add return value for prediction outputs
     """    
+    logger.error('ok')
 
     # read data
     final_dataset=diagnostics.read_data(dataset_csv_path)
+    logger.info('final_dataset: {}'.format(str(final_dataset.head())))
 
     # read model
     model_trained=diagnostics.read_model(model_path)
+    logger.info('model_trained')
 
     # make prediction
     preds=diagnostics.make_prediction(model_trained,final_dataset)
+    logger.info('preds: {}'.format(preds))
 
     return {'preds':preds,'status_code':200}
 
@@ -84,7 +93,7 @@ def stats():
 
 #######################Summary Statistics Endpoint
 @app.route("/summarystats", methods=['GET','OPTIONS'])
-def stats():       
+def summarystats():       
     """
     check means, medians, and modes for each column
     return a list of all calculated summary statistics
@@ -101,7 +110,7 @@ def stats():
 
 #######################Diagnostics Endpoint
 @app.route("/diagnostics", methods=['GET','OPTIONS'])
-def stats():        
+def diagnostics():        
     """
     check timing and percent NA values
     return #add return value for all diagnostics
@@ -124,4 +133,4 @@ def stats():
 
 
 if __name__ == "__main__":    
-    app.run(host='0.0.0.0', port=8000, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=8000)
