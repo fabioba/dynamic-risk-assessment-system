@@ -48,14 +48,7 @@ logger.info(__name__)
 ######################Set up variables for use in our script
 app = Flask(__name__)
 
-prediction_model = None
-import sys
-#print(sys.modules)
 
-@app.route("/")
-def home():
-    print('home')
-    return {"ok":"ok"}
 
 #######################Prediction Endpoint
 @app.route("/prediction", methods=['GET','POST'])
@@ -114,23 +107,20 @@ def summarystats():
     return {"list_mean":str(list_mean),"list_median":str(list_median),"list_std":str(list_std), "status_code":200}
 
 #######################Diagnostics Endpoint
-@app.route("/diagnostics", methods=['GET','OPTIONS'])
+@app.route("/get_diagnostics", methods=['GET','OPTIONS'])
 def get_diagnostics():        
     """
     check timing and percent NA values
     return #add return value for all diagnostics
     """
+    logger.info('get_diagnostics')
     final_dataset=diagnostics.read_data(dataset_csv_path)
 
-    model_trained=diagnostics.read_model(model_path)
-
-    preds=diagnostics.make_prediction(model_trained,final_dataset)
-
-    list_mean,list_median,list_std=diagnostics.dataframe_summary(final_dataset)
-
     list_na_values_perc=diagnostics.check_integrity(final_dataset)
+    logger.info('list_na_values_perc: {}'.format(list_na_values_perc))
 
     list_timing=diagnostics.training_timing()
+    logger.info('list_timing: {}'.format(list_timing))
 
     table_packages=diagnostics.outdated_packages_list()
 

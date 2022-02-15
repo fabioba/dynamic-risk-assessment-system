@@ -26,7 +26,7 @@ def get_response(name_endpoint):
         url='http://127.0.0.1:8000/{}'.format(name_endpoint)
 
         logger.info('url: {}'.format(url))
-        response=requests.post(url)
+        response=requests.get(url)
 
         logger.info('response: {}'.format(response))
 
@@ -42,6 +42,8 @@ def get_response(name_endpoint):
         logger.exception(err)
         raise
 
+"""
+
 if __name__=='__main__':
     
 
@@ -56,4 +58,4 @@ if __name__=='__main__':
     with open('apireturns.txt','a+') as handler:
         for resp in list_response:
             handler.write(str(resp))
-        
+"""

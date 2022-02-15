@@ -45,7 +45,7 @@ from risk_assessment_tool.src.scoring import scoring
 from risk_assessment_tool.src.deployment import deployment
 from risk_assessment_tool.src.diagnostics import diagnostics
 from risk_assessment_tool.src.reporting import reporting
-
+from risk_assessment_tool.src.reporting.server import apicalls
 
 ##################Check and read new data
 #first, read ingestedfiles.txt
@@ -125,7 +125,17 @@ def check_read_new_data():
 
             reporting.score_model(dataset_csv_path,model_path_prod,confusion_matrix_path_prod,diagnostics.read_data,diagnostics.read_model)
 
-
+        list_response=list()
+        #Call each API endpoint and store the responses
+        list_response.append(apicalls.get_response('prediction'))
+        list_response.append(apicalls.get_response('scoring'))
+        list_response.append(apicalls.get_response('summarystats'))
+        list_response.append(apicalls.get_response('get_diagnostics'))
+        
+        # store all responses
+        with open('apireturns2.txt','a+') as handler:
+            for resp in list_response:
+                handler.write(str(resp))
     except Exception as err:
         logger.exception(err)
 
@@ -150,6 +160,19 @@ def workflow():
         diagnostics.check_data(dataset_csv_path,model_path)
 
         reporting.score_model(test_data_path,model_path,confusion_matrix_path,diagnostics.read_data,diagnostics.read_model)
+
+
+        list_response=list()
+        #Call each API endpoint and store the responses
+        list_response.append(apicalls.get_response('prediction'))
+        list_response.append(apicalls.get_response('scoring'))
+        list_response.append(apicalls.get_response('summarystats'))
+        list_response.append(apicalls.get_response('get_diagnostics'))
+        
+        # store all responses
+        with open('apireturns.txt','a+') as handler:
+            for resp in list_response:
+                handler.write(str(resp))
 
 
     except Exception as err:
