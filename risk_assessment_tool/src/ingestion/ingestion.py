@@ -117,8 +117,12 @@ def merge_multiple_dataframe(input_folder_path,output_folder_path,list_ingested_
         # get all elements in folder
         list_elems=os.listdir(data_folder)
 
-        # get file to ingest
-        list_file_to_ingest=list(set(set(list_elems)-set(list_ingested_prior)))
+        # if list has been passed 
+        if len(list_ingested_prior)>0:
+            list_file_to_ingest=list_ingested_prior
+        else:
+            # get file to ingest
+            list_file_to_ingest=list(set(set(list_elems)-set(list_ingested_prior)))
 
         for file in list_file_to_ingest:
             logger.info('elem in {} folder: {}'.format(data_folder,file))

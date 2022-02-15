@@ -27,17 +27,14 @@ scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.
 
 prod_deployment_path= config_dict['prod_deployment_path']
 scoring_model_path_prod = os.path.join(config_dict['prod_deployment_path'],'latestscore.txt') 
+model_path_prod = os.path.join(config_dict['prod_deployment_path'],'trainedmodel.pkl') 
+confusion_matrix_path_prod = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
 
 path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
 confusion_matrix_path = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
 
 
-import numpy as np
-import json
-from datetime import datetime
-import pandas as pd
-from pathlib import Path
 import logging
 
 logger=logging.getLogger(__name__)
@@ -106,8 +103,27 @@ def check_read_new_data():
 
         # read last score
         with open(scoring_model_path_prod,'r') as handler:
-            scoring_stored=handler.read()
+            scoring_stored=float(handler.read())
         logging.info('scoring_stored: {}'.format(scoring_stored))
+
+        # run trained model
+        model_trained=scoring.read_model(model_path_prod)
+        data_stored=scoring.read_data(dataset_csv_path)
+
+        preds=scoring.make_prediction(model_trained,data_stored)
+        logging.info('preds: {}'.format(preds))
+
+        new_score=scoring.score_model(preds,data_stored)
+        logging.info('new score: {}'.format(new_score))
+
+        # if new score < old score then drift has occured
+        if new_score < scoring_stored:
+            logging.info('MODEL DRIFT')
+            training.train_model(dataset_csv_path,model_path_prod)
+
+        else:
+
+            reporting.score_model(dataset_csv_path,model_path_prod,confusion_matrix_path_prod,diagnostics.read_data,diagnostics.read_model)
 
 
     except Exception as err:
