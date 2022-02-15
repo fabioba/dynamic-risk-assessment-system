@@ -34,11 +34,12 @@ def get_response(name_endpoint):
         raise
 
 if __name__=='__main__':
+    
+    get_response('test')
 
     list_response=list()
-    x=get_response('prediction')
     #Call each API endpoint and store the responses
-    list_response.append(x)
+    #list_response.append(get_response('prediction'))
     #list_response.append(get_response('scoring'))
     #list_response.append(get_response('summarystats'))
     #list_response.append(get_response('diagnostics'))

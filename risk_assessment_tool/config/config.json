@@ -1,5 +1,5 @@
 { 
-    "input_folder_path": "risk_assessment_tool/src/ingestion/data/practicedata", 
+    "input_folder_path": "risk_assessment_tool/src/ingestion/data/practicedata",
     "output_folder_path": "risk_assessment_tool/src/ingestion/data/ingesteddata", 
     "test_data_path": "risk_assessment_tool/src/ingestion/data/testdata", 
     "output_model_path": "risk_assessment_tool/src/training/model/practicemodels", 

@@ -6,8 +6,6 @@ Author: Fabio Barbazza
 """
 from risk_assessment_tool import config
 
-# set logging dict
-config.set_logger()
 
 from flask import Flask, session, jsonify, request
 import pandas as pd
@@ -16,14 +14,13 @@ import pickle
 import json
 import os
 import logging
+logging.basicConfig(format='%(name)s %(funcName)s %(asctime)s %(message)s',level='DEBUG')
 
-import sys
 # append the path of the
 # parent directory
 from risk_assessment_tool.src.diagnostics import diagnostics
 from risk_assessment_tool.src.scoring import scoring
 
-from risk_assessment_tool import config
 
 # read config.json
 
@@ -46,6 +43,8 @@ confusion_matrix_path = os.path.join(config_dict['output_model_path'],'confusion
 
 logger=logging.getLogger(__name__)
 
+logger.info(__name__)
+
 
 ######################Set up variables for use in our script
 app = Flask(__name__)
@@ -53,27 +52,30 @@ app.secret_key = '1652d576-484a-49fd-913a-6879acfa6ba4'
 
 prediction_model = None
 
+@app.route("/")
+def home():
+    print('home')
+    return {"ok":"ok"}
 
 #######################Prediction Endpoint
-@app.route("/prediction", methods=['POST','OPTIONS'])
+@app.route("/prediction")
 def predict(): 
     """
     call the prediction function you created in Step 3
     add return value for prediction outputs
     """    
-    logger.error('ok')
 
     # read data
     final_dataset=diagnostics.read_data(dataset_csv_path)
-    logger.info('final_dataset: {}'.format(str(final_dataset.head())))
+    #logger.info('final_dataset: {}'.format(str(final_dataset.head())))
 
     # read model
     model_trained=diagnostics.read_model(model_path)
-    logger.info('model_trained')
+    #logger.info('model_trained')
 
     # make prediction
     preds=diagnostics.make_prediction(model_trained,final_dataset)
-    logger.info('preds: {}'.format(preds))
+    #logger.info('preds: {}'.format(preds))
 
     return {'preds':preds,'status_code':200}
 
@@ -131,6 +133,10 @@ def diagnostics():
 
     return {"timing":list_timing,"missing_data":list_na_values_perc,"dependency_checks":table_packages, "status_code":200}
 
+@app.route("/test", methods=['GET','OPTIONS'])
+def test():  
+    logger.info('ok')
+
 
 if __name__ == "__main__":    
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, debug=True)
