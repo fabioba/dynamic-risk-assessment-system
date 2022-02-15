@@ -5,11 +5,7 @@ The aim of this module is to ingest data
 Date: 15th of Feb, 2022
 Author: Fabio Barbazza
 """
-# import config file
 from risk_assessment_tool import config
-# read config.json
-config.read_config()
-
 
 import numpy as np
 import os
@@ -26,6 +22,15 @@ config_dict = config.read_config()
 input_folder_path = config_dict['input_folder_path']
 output_folder_path = config_dict['output_folder_path']
 
+
+dataset_csv_path = os.path.join(config_dict['output_folder_path'],'finaldata.csv') 
+model_path = os.path.join(config_dict['output_model_path'],'trainedmodel.pkl') 
+
+test_data_path = os.path.join(config_dict['test_data_path'],'testdata.csv') 
+scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.txt') 
+
+prod_deployment_path= config_dict['prod_deployment_path']
+path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
 
 def check_extension_file(file):
@@ -70,15 +75,16 @@ def read_file(path_file,ext):
         raise
 
 
-def store_list_files(list_files):
+def store_list_files(list_files,output_folder_path):
     """
         This method store the list of read files
 
         Args:
             list_files(list): list files to create output df
+            output_folder_path(str)
     """
     try:
-        output_path=str(Path(__file__).parent / output_folder_path / 'ingestedfiles.txt')
+        output_path=os.path.join( output_folder_path , 'ingestedfiles.txt')
         
         with open(output_path, 'w') as f:
             for item in list_files:
@@ -91,19 +97,21 @@ def store_list_files(list_files):
         raise
 
 
-def merge_multiple_dataframe():
+def merge_multiple_dataframe(input_folder_path,output_folder_path):
     """
         This method ingest data from folders
 
+        Args:
+            input_folder_path(str): path input data
+            output_folder_path(str): path output folder
 
-        Output:
-            df(pandas DF)
+
     """
     try:
 
         df_final=pd.DataFrame()
 
-        data_folder=str(Path(__file__).parent / input_folder_path)
+        data_folder=input_folder_path
 
         # get all elements in folder
         list_elems=os.listdir(data_folder)
@@ -124,11 +132,9 @@ def merge_multiple_dataframe():
 
         clean_data(df_final)
 
-        store_data(df_final)
+        store_data(df_final,output_folder_path)
 
-        store_list_files(list_elems)
-
-        return df_final
+        store_list_files(list_elems,output_folder_path)
                 
     except Exception as err:
         logger.exception(err)
@@ -149,14 +155,16 @@ def clean_data(df):
         logger.exception(err)
         raise        
 
-def store_data(df):
+def store_data(df,output_folder_path):
     """
         This method gets as argument the dataframe to be stored as csv
 
-        Args(pandas DF)
+        Args:
+            df(pandas DF)
+            output_folder_path(str)
     """
     try:
-        output_path=str(Path(__file__).parent / output_folder_path / 'finaldata.csv')
+        output_path=os.path.join(output_folder_path , 'finaldata.csv')
         df.to_csv(output_path)
 
         logger.info('SUCCESS')

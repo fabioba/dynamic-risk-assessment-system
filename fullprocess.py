@@ -7,29 +7,43 @@ Author: Fabio Barbazza
 """
 # import config file
 from risk_assessment_tool import config
+import os
 
 # set logging dict
 config.set_logger()
 
 # read config.json
-config.read_config()
+
+config_dict = config.read_config()
+input_folder_path = config_dict['input_folder_path']
+output_folder_path = config_dict['output_folder_path']
+
+
+dataset_csv_path = os.path.join(config_dict['output_folder_path'],'finaldata.csv') 
+model_path = os.path.join(config_dict['output_model_path'],'trainedmodel.pkl') 
+
+test_data_path = os.path.join(config_dict['test_data_path'],'testdata.csv') 
+scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.txt') 
+
+prod_deployment_path= config_dict['prod_deployment_path']
+path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
 
 import numpy as np
-import os
 import json
 from datetime import datetime
 import pandas as pd
 from pathlib import Path
-import os
 import logging
 
 logger=logging.getLogger(__name__)
 
 from risk_assessment_tool.src.ingestion import ingestion
-#from src.training import training
-#from src.scoring import scoring
-#from src.deployment import deployment
+from risk_assessment_tool.src.training import training
+from risk_assessment_tool.src.scoring import scoring
+from risk_assessment_tool.src.deployment import deployment
+from risk_assessment_tool.src.diagnostics import diagnostics
+
 #from src.diagnostics import diagnostics
 #from src.reporting import reporting
 
@@ -68,7 +82,15 @@ def workflow():
 
         logger.info('START')
 
-        df_input=ingestion.merge_multiple_dataframe()
+        ingestion.merge_multiple_dataframe(input_folder_path,output_folder_path)
+
+        training.train_model(dataset_csv_path,model_path)
+
+        scoring.calculate_score_model(test_data_path,model_path,scoring_model_path)
+
+        deployment.store_model_into_pickle(scoring_model_path, model_path,path_ingestedfiles, prod_deployment_path)
+
+        diagnostics.check_data(dataset_csv_path,model_path)
 
 
     except Exception as err:

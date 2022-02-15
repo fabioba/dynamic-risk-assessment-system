@@ -1,7 +1,7 @@
 { 
-    "input_folder_path": "data/practicedata", 
-    "output_folder_path": "data/ingesteddata", 
-    "test_data_path": "data/testdata", 
-    "output_model_path": "model/practicemodels", 
-    "prod_deployment_path": "model/production_deployment"
+    "input_folder_path": "risk_assessment_tool/src/ingestion/data/practicedata", 
+    "output_folder_path": "risk_assessment_tool/src/ingestion/data/ingesteddata", 
+    "test_data_path": "risk_assessment_tool/src/ingestion/data/testdata", 
+    "output_model_path": "risk_assessment_tool/src/training/model/practicemodels", 
+    "prod_deployment_path": "risk_assessment_tool/src/training/model/production_deployment"
 }
