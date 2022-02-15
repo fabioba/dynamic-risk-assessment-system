@@ -26,6 +26,8 @@ test_data_path = os.path.join(config_dict['test_data_path'],'testdata.csv')
 scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.txt') 
 
 prod_deployment_path= config_dict['prod_deployment_path']
+scoring_model_path_prod = os.path.join(config_dict['prod_deployment_path'],'latestscore.txt') 
+
 path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
 confusion_matrix_path = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
@@ -84,7 +86,7 @@ def check_read_new_data():
         # read ingestedfile.txt
         with open(path_ingestedfiles, 'r') as handler:
             ingested_files=handler.read().split('\n')
-            
+
         logger.info('ingested_files: {}'.format(ingested_files))
         # check if there's some files in sourcedata that are not ingested yet
         list_elems=os.listdir(input_folder_path)
@@ -103,6 +105,9 @@ def check_read_new_data():
 
 
         # read last score
+        with open(scoring_model_path_prod,'r') as handler:
+            scoring_stored=handler.read()
+        logging.info('scoring_stored: {}'.format(scoring_stored))
 
 
     except Exception as err:
