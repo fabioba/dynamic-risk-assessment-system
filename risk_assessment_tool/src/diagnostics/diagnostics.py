@@ -211,6 +211,9 @@ def training_timing():
 def outdated_packages_list():
     """
         Monitor installed packages
+
+        Output:
+            df(pandas DF): dataframe with installed packages
     """
     try:
         data = subprocess.check_output(["pip", "list", "--format", "json"])
@@ -218,9 +221,10 @@ def outdated_packages_list():
         table_final=[(element["name"], element["version"]) for element in parsed_results]
         #table_final=[subprocess.check_output(['python','-m','pip', 'show', element["name"]]) for element in parsed_results]
 
-        logger.info('table_final: {}'.format(table_final))
+        df=pd.DataFrame(table_final)
+        logger.info('df: {}'.format(str(df.head())))
 
-        return table_final
+        return df
 
 
 

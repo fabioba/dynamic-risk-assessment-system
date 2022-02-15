@@ -28,6 +28,8 @@ scoring_model_path = os.path.join(config_dict['output_model_path'],'latestscore.
 prod_deployment_path= config_dict['prod_deployment_path']
 path_ingestedfiles= os.path.join(config_dict['output_folder_path'],'ingestedfiles.txt')
 
+confusion_matrix_path = os.path.join(config_dict['output_model_path'],'confusionmatrix.png') 
+
 
 import numpy as np
 import json
@@ -43,9 +45,8 @@ from risk_assessment_tool.src.training import training
 from risk_assessment_tool.src.scoring import scoring
 from risk_assessment_tool.src.deployment import deployment
 from risk_assessment_tool.src.diagnostics import diagnostics
+from risk_assessment_tool.src.reporting import reporting
 
-#from src.diagnostics import diagnostics
-#from src.reporting import reporting
 
 ##################Check and read new data
 #first, read ingestedfiles.txt
@@ -91,6 +92,8 @@ def workflow():
         deployment.store_model_into_pickle(scoring_model_path, model_path,path_ingestedfiles, prod_deployment_path)
 
         diagnostics.check_data(dataset_csv_path,model_path)
+
+        reporting.score_model(test_data_path,model_path,confusion_matrix_path,diagnostics.read_data,diagnostics.read_model)
 
 
     except Exception as err:
